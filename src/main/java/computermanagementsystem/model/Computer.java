@@ -20,6 +20,7 @@ public class Computer {
     private int storageCapacity;
     private double price;
 
+    public Computer(){}
     public Computer(Long id,String brand, String model, String processor, int RAM, int storageCapacity, double price) {
         this.id = id;
         this.brand = brand;
@@ -29,4 +30,6 @@ public class Computer {
         this.storageCapacity = storageCapacity;
         this.price = price;
     }
+
+
 }

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ComputerTest {
+public class ComputerTestService {
 
     private ComputerService computerService;
 
