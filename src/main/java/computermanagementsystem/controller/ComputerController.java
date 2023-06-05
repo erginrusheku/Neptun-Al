@@ -1,6 +1,6 @@
 package computermanagementsystem.controller;
 
-import computermanagementsystem.model.Computer;
+import computermanagementsystem.dto.ComputerDTO;
 import computermanagementsystem.service.ComputerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,22 +18,23 @@ public class ComputerController {
     }
 
     @GetMapping
-    public List<Computer> getAll(){
+    public List<ComputerDTO> getAll(){
         return computerService.getAll();
     }
 
+
     @PostMapping
-    public Computer addComputer(@RequestBody Computer computer){
-        return computerService.addComputer(computer);
+    public ComputerDTO addComputer(@RequestBody ComputerDTO computerDTO){
+        return computerService.addComputer(computerDTO);
     }
 
     @GetMapping("/{id}")
-    public Computer getById(@PathVariable Long id){
+    public ComputerDTO getById(@PathVariable Long id){
         return computerService.getById(id);
     }
 
     @PutMapping("/{id}")
-    public Computer updateComputer(@PathVariable Long id, @RequestBody Computer computer){
+    public ComputerDTO updateComputer(@PathVariable Long id, @RequestBody ComputerDTO computer){
         return computerService.updateComputer(id,computer);
     }
 

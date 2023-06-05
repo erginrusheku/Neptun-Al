@@ -21,7 +21,7 @@ public class Computer {
     private double price;
 
     public Computer(){}
-    public Computer(Long id,String brand, String model, String processor, int RAM, int storageCapacity, double price) {
+    public Computer(Long id, String brand, String model, String processor, int RAM, int storageCapacity, double price) {
         this.id = id;
         this.brand = brand;
         this.model = model;

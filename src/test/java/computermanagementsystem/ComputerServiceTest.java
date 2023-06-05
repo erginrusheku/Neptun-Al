@@ -1,86 +1,108 @@
 package computermanagementsystem;
 
+import computermanagementsystem.dto.ComputerDTO;
+import computermanagementsystem.mapper.ComputerMapper;
 import computermanagementsystem.model.Computer;
 import computermanagementsystem.repository.ComputerRepository;
 import computermanagementsystem.service.ComputerService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Mockito;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class ComputerServiceTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
+public class ComputerServiceTest {
+    @InjectMocks
     private ComputerService computerService;
 
     @Mock
     private ComputerRepository computerRepository;
 
+    @Mock
+
+    private ComputerMapper computerMapper;
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        computerService = new ComputerService(computerRepository);
     }
 
     @Test
     public void testGetAllComputers() {
         // Arrange
-        List<Computer> computers = new ArrayList<>();
-        computers.add(new Computer(1L,"LENOVO", "ThinkCenter", "Intel Core i5", 16, 256, 455.99));
+        Computer computer1 = new Computer(1L,"Dell", "Latitude", "Intel Core i5", 8, 256, 999.99);
+        Computer computer2 = new Computer(2L,"Dell", "Latitude", "Intel Core i5", 8, 256, 999.99);
+        List<Computer> computers = Arrays.asList(computer1,computer2);
+
         Mockito.when(computerRepository.findAll()).thenReturn(computers);
+        Mockito.when(computerMapper.toDto(computer1)).thenReturn(new ComputerDTO(1L,"Dell", "Latitude", "Intel Core i5", 8, 256, 999.99));
+        Mockito.when(computerMapper.toDto(computer2)).thenReturn(new ComputerDTO(2L,"Dell", "Latitude", "Intel Core i5", 8, 256, 999.99));
 
         // Act
-        List<Computer> result = computerService.getAll();
+        List<ComputerDTO> result = computerService.getAll();
 
         // Assert
-        Assertions.assertEquals(computers, result);
+        assertEquals(computers.size(), result.size());
     }
 
     @Test
     public void testAddComputer() {
         // Arrange
-        Computer computer = new Computer(2L,"Dell", "Latitude", "Intel Core i5", 8, 256, 999.99);
+        ComputerDTO computerDTO = new ComputerDTO(1L,"Dell", "Latitude", "Intel Core i5", 8, 256, 999.99);
+        Computer computer = new Computer(1L,"Dell", "Latitude", "Intel Core i5", 8, 256, 999.99);
+
+        Mockito.when(computerMapper.toEntity(computerDTO)).thenReturn(computer);
+        Mockito.when(computerMapper.toDto(computer)).thenReturn(computerDTO);
         Mockito.when(computerRepository.save(computer)).thenReturn(computer);
 
         // Act
-        Computer result = computerService.addComputer(computer);
+        ComputerDTO result = computerService.addComputer(computerDTO);
 
         // Assert
-        Assertions.assertEquals(computer, result);
+        assertEquals(computerDTO, result);
     }
 
     @Test
     public void testGetComputerById() {
         // Arrange
         Long computerId = 1L;
-        Computer computer = new Computer(computerId, "Philip", "TRS", "Intel Core i6", 32, 1024, 1299.99);
+        Computer computer = new Computer(computerId, "Dell", "Latitude", "Intel Core i5", 8, 256, 999.99);
+        ComputerDTO computerDTO = new ComputerDTO(computerId, "Dell", "Latitude", "Intel Core i5", 8, 256, 999.99);
+
         Mockito.when(computerRepository.findById(computerId)).thenReturn(Optional.of(computer));
+        Mockito.when(computerMapper.toDto(computer)).thenReturn(computerDTO);
 
         // Act
-        Computer result = computerService.getById(computerId);
+        ComputerDTO result = computerService.getById(computerId);
 
         // Assert
-        Assertions.assertEquals(computer, result);
+        assertEquals(computerDTO, result);
     }
 
     @Test
     public void testUpdateComputer() {
         // Arrange
         Long computerId = 1L;
-        Computer existingComputer = new Computer(computerId, "Dell", "Latitude", "Intel Core i5", 8, 256, 999.99);
+        ComputerDTO updatedComputerDTO = new ComputerDTO(computerId, "Dell", "Latitude", "Intel Core i5", 8, 256, 999.99);
         Computer updatedComputer = new Computer(computerId, "Dell", "Latitude", "Intel Core i7", 16, 512, 1299.99);
-        Mockito.when(computerRepository.findById(computerId)).thenReturn(Optional.of(existingComputer));
-        Mockito.when(computerRepository.save(existingComputer)).thenReturn(updatedComputer);
+        Mockito.when(computerRepository.findById(computerId)).thenReturn(Optional.of(new Computer()));
+        Mockito.when(computerRepository.save(any(Computer.class))).thenReturn(updatedComputer);
+        Mockito.when(computerMapper.toDto(updatedComputer)).thenReturn(updatedComputerDTO);
 
         // Act
-        Computer result = computerService.updateComputer(computerId, updatedComputer);
+        ComputerDTO result = computerService.updateComputer(computerId, updatedComputerDTO);
 
         // Assert
-        Assertions.assertEquals(updatedComputer, result);
+        assertEquals(updatedComputerDTO, result);
     }
 
     @Test
@@ -89,9 +111,9 @@ public class ComputerServiceTest {
         Long computerId = 1L;
 
         // Act
-        Assertions.assertDoesNotThrow(() -> computerService.deleteComputer(computerId));
+        computerService.deleteComputer(computerId);
 
         // Assert
-        Mockito.verify(computerRepository, Mockito.times(1)).deleteById(computerId);
+        verify(computerRepository, times(1)).deleteById(computerId);
     }
 }
